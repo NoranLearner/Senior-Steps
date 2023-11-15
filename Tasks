@@ -1,0 +1,97 @@
+
+- اسم الموظف ال fullname بتاعه و اسم القسم بتاعه و اسم ال city بتاعه القسم و اسم ال country و اسم ال region 
+
+SELECT CONCAT(TRIM(first_name), ' ', TRIM(last_name)) AS full_name FROM `employees`;
+
+SELECT department_name FROM `employees`, `departments` WHERE employees.department_id = departments.department_id;
+
+SELECT city FROM `locations` , `departments` WHERE locations.location_id = departments.location_id;
+
+SELECT country_name FROM `countries`, `locations` WHERE countries.country_id = locations.country_id;
+
+SELECT region_name FROM `regions` , `countries` WHERE regions.region_id = countries.region_id;
+
+Total:
+
+SELECT
+
+	CONCAT(TRIM(first_name), ' ', TRIM(last_name)) AS full_name , department_name , city , country_name , region_name
+	
+FROM
+
+	`employees`, `departments` , `locations` , `countries`, `regions`
+	
+WHERE
+
+	employees.department_id = departments.department_id
+	
+AND
+
+	locations.location_id = departments.location_id
+	
+AND
+
+	countries.country_id = locations.country_id
+	
+AND
+	
+	regions.region_id = countries.region_id;
+
+__________________________________________________
+
+- عاوز اعرض اسماء البلاد ال country name و كل country جواها كام قسم department او ال department name و قدامها البلد اللى منها 
+
+SELECT COUNT(department_id) AS department_number , location_id FROM `departments` GROUP BY location_id;
+
+SELECT 
+	COUNT(department_id) AS department_number , 
+	departments.location_id , 
+	locations.city 
+FROM 
+	`departments` , `locations` 
+Where 
+	departments.location_id = locations.location_id 
+GROUP BY 
+	location_id ;
+
+__________________________________________________
+
+- عاوز اعرف كام male و female مع كل مدير و نجيب اسم المدير ده ايه 
+
+SELECT 
+	COUNT(gender) AS gender_number, 
+	CASE gender WHEN '0' THEN 'Male' WHEN '1' THEN 'Female' END AS gender,
+FROM 
+	`employees` 
+GROUP BY gender;
+
+
+SELECT CONCAT(TRIM(first_name), ' ', TRIM(last_name)) AS manager_name FROM `employees` GROUP BY  manager_id ;
+
+__________________________________________________
+
+- و عاوز كل واحد يجيبلى هو عنده كام سنه بالايام (عندى كام سنه و كام شهر و كام يوم)
+
+SELECT DATEDIFF(CURRENT_TIME , '1992-08-12') / 365 As year_number;
+
+SELECT DATEDIFF(CURRENT_TIME , '1992-08-12') /365 * 12 As month_number;
+
+SELECT DATEDIFF(CURRENT_TIME , '1992-08-12')  As day_number;
+
+__________________________________________________
+
+- هاتلى مجموع المرتبات اللى بتتصرف فى كل country و لو بلد مفيهاش موظفين اكتبلى not found 
+
+SELECT 
+	SUM(salary) , 
+	ifnull(employees.department_id, 'not found') As department_id, 
+	departments.department_name 
+FROM 
+	`employees`, `departments` 
+WHERE 
+	employees.department_id = departments.department_id 
+GROUP BY 
+	department_id;
+
+
+
